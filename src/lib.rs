@@ -18,7 +18,7 @@ mod tests;
 #[derive(Debug)]
 pub struct Error {
     pub kind: Kind,
-    pub source: Box<dyn std::error::Error>,
+    pub source: Box<dyn std::error::Error + Sync + Send>,
     pub backtrace: Backtrace,
 }
 
@@ -197,7 +197,6 @@ impl Client {
         let status = resp.status();
         if status.as_u16() / 100 == 2 {
             let text = resp.text().await?;
-            println!("{text}");
             Ok(serde_json::from_str(text.as_str())?)
         } else {
             let text = resp.text().await?;
