@@ -507,7 +507,7 @@ enum_str!(DeviceSort{
     UdidDesc("-udid"),
 });
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Device {
     #[serde(rename = "type")]
     pub type_field: String,
@@ -516,7 +516,7 @@ pub struct Device {
     pub links: SelfLinks,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DeviceAttributes {
     #[serde(rename = "addedDate")]
     pub added_date: DateTime<Utc>, // "2022-12-10T12:02:45.000+00:00"
@@ -526,7 +526,7 @@ pub struct DeviceAttributes {
     pub model: Option<String>,
     pub udid: String,
     pub platform: String,
-    pub status: String,
+    pub status: DeviceStatus,
 }
 
 // Device Create
