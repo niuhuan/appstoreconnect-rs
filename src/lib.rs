@@ -1,13 +1,9 @@
-use crate::entities::{
-    BundleId, BundleIdQuery, Certificate, CertificateQuery, Device, DeviceCreateRequest,
-    DeviceQuery, EntityResponse, PageResponse, Profile, ProfileCreateRequest, ProfileQuery,
-};
+pub use crate::entities::*;
 use chrono::Utc;
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use reqwest::Method;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
-use std::backtrace::Backtrace;
 use std::fmt::{Display, Formatter};
 use tokio::sync::Mutex;
 
@@ -16,38 +12,52 @@ pub mod entities;
 mod tests;
 
 #[derive(Debug)]
-pub struct Error {
-    pub kind: Kind,
-    pub source: Box<dyn std::error::Error + Sync + Send>,
-    pub backtrace: Backtrace,
+pub enum Error {
+    Key(jsonwebtoken::errors::Error),
+    Convert(serde_json::Error),
+    Reqwest(reqwest::Error),
+    ServerErrors(ServerErrors),
+    Message(ErrorMessage),
+    Other(Box<dyn std::error::Error + Sync + Send>),
 }
 
 impl Error {
     fn message(content: impl Into<String>) -> Self {
-        Self {
-            kind: Kind::Message,
-            source: Box::new(ErrorMessage {
-                content: content.into(),
-            }),
-            backtrace: Backtrace::capture(),
-        }
+        Self::Message(ErrorMessage {
+            content: content.into(),
+        })
     }
-}
-
-#[derive(Debug)]
-pub enum Kind {
-    Reqwest,
-    ServerErrors,
-    Key,
-    Message,
-    Convert,
 }
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut builder = f.debug_struct("apple_development::Error");
-        builder.field("kind", &self.kind);
-        builder.field("source", &self.source);
+        match self {
+            Error::Key(err) => {
+                builder.field("kind", &"Key");
+                builder.field("source", err);
+            }
+            Error::Convert(err) => {
+                builder.field("kind", &"Convert");
+                builder.field("source", err);
+            }
+            Error::Reqwest(err) => {
+                builder.field("kind", &"Reqwest");
+                builder.field("source", err);
+            }
+            Error::ServerErrors(err) => {
+                builder.field("kind", &"ServerErrors");
+                builder.field("source", err);
+            }
+            Error::Message(err) => {
+                builder.field("kind", &"Message");
+                builder.field("source", err);
+            }
+            Error::Other(err) => {
+                builder.field("kind", &"Other");
+                builder.field("source", err);
+            }
+        }
         builder.finish()
     }
 }
@@ -71,7 +81,7 @@ pub struct ServerError {
 
 impl Display for ServerErrors {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut builder = f.debug_struct("apple_development::Error");
+        let mut builder = f.debug_struct("apple_development::ServerErrors");
         builder.field("errors", &self.errors);
         builder.finish()
     }
@@ -81,31 +91,19 @@ impl std::error::Error for ServerErrors {}
 
 impl From<reqwest::Error> for Error {
     fn from(value: reqwest::Error) -> Self {
-        Self {
-            kind: Kind::Reqwest,
-            source: Box::new(value),
-            backtrace: Backtrace::capture(),
-        }
+        Self::Reqwest(value)
     }
 }
 
 impl From<jsonwebtoken::errors::Error> for Error {
     fn from(value: jsonwebtoken::errors::Error) -> Self {
-        Self {
-            kind: Kind::Key,
-            source: Box::new(value),
-            backtrace: Backtrace::capture(),
-        }
+        Self::Key(value)
     }
 }
 
 impl From<serde_json::Error> for Error {
     fn from(value: serde_json::Error) -> Self {
-        Self {
-            kind: Kind::Convert,
-            source: Box::new(value),
-            backtrace: Backtrace::capture(),
-        }
+        Self::Convert(value)
     }
 }
 
@@ -116,7 +114,7 @@ pub struct ErrorMessage {
 
 impl Display for ErrorMessage {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut builder = f.debug_struct("apple_development::Error");
+        let mut builder = f.debug_struct("apple_development::ErrorMessage");
         builder.field("content", &self.content);
         builder.finish()
     }
@@ -201,11 +199,7 @@ impl Client {
         } else {
             let text = resp.text().await?;
             let e: ServerErrors = serde_json::from_str(text.as_str())?;
-            Err(Error {
-                kind: Kind::ServerErrors,
-                source: Box::new(e),
-                backtrace: Backtrace::capture(),
-            })
+            Err(Error::ServerErrors(e))
         }
     }
 

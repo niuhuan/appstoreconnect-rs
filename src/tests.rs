@@ -1,3 +1,4 @@
+use base64::DecodeError;
 use crate::entities::{
     BundleIdPlatform, BundleIdQuery, BundleIdsType, CertificateQuery, CertificatesType,
     DeviceCreateRequest, DeviceCreateRequestData, DeviceCreateRequestDataAttributes, DeviceQuery,
@@ -9,16 +10,11 @@ use crate::entities::{
     ProfileCreateRequestDataRelationshipsDevices, ProfileCreateRequestDataRelationshipsDevicesData,
     ProfileCreateRequestRelationships, ProfileCreateRequestType, ProfileQuery, ProfileType,
 };
-use crate::{Client, ClientBuilder, Error, Kind, Result};
-use std::backtrace::Backtrace;
+use crate::{Client, ClientBuilder, Error, Result};
 
-impl From<base64::DecodeError> for Error {
-    fn from(value: base64::DecodeError) -> Self {
-        Self {
-            kind: Kind::Key,
-            source: Box::new(value),
-            backtrace: Backtrace::capture(),
-        }
+impl From<DecodeError> for Error {
+    fn from(value: DecodeError) -> Self {
+        Self::Other(Box::new(value))
     }
 }
 
@@ -40,7 +36,6 @@ where
             Err(err) => panic!("{}", err),
         },
         Err(err) => {
-            println!("{:?}", err.backtrace);
             panic!("{}", err);
         }
     }
