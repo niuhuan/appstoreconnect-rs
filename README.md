@@ -1,27 +1,57 @@
 app store connect
 =================
 
-`AppStoreConnect` Client for rust
+This repository is an `AppStoreConnect` api client, allow your invoke api in Rust. The full api docs in [here](https://developer.apple.com/documentation/appstoreconnectapi). 
 
-```toml
-appstoreconnect = "0"
-```
+## Easily to use
 
-```rust
-#[tokio::main]
-async fn main() -> Result<()> {
-    // create client
-    let client = ClientBuilder::default()
-        .with_iss(env!("iss"))
-        .with_kid(env!("kid"))
-        .with_ec_der(base64::decode(env!("ec_der"))?) // ec_der is base64text from .p8
-        .build()?;
-    // get find devices
-    let devices = client.devices(DeviceQuery {
-                filter_name: Some("mini".to_string()),
-                ..Default::default()
-            }).await?;
-    // create or list profile, certs, bundleIds please visit tests.rs
-    Ok(())
-}
-```
+1. First. You need request `Issuer ID`, `KeyId` and `Key` in the website : https://appstoreconnect.apple.com/access/api.
+
+2. Adding appstoreconnect
+
+    Run this command in your terminal to add the latest version of `appstoreconnect`.
+    ```shell
+    $ cargo add appstoreconnect
+    ```
+
+3. build and use the client
+
+    `iss` => `Issuer ID` / `kid` => `KeyId` / `ec_der` => key.p8 base64 content
+    ```rust
+    #[tokio::main]
+    async fn main() -> Result<()> {
+        // create client
+        let client = ClientBuilder::default()
+            .with_iss(env!("iss"))
+            .with_kid(env!("kid"))
+            .with_ec_der(base64::decode(env!("ec_der"))?) 
+            .build()?;
+        // get find devices
+        let devices = client.devices(DeviceQuery {
+                    filter_name: Some("mini".to_string()),
+                    ..Default::default()
+                }).await?;
+        Ok(())
+    }
+    ```
+
+4. More example : Create or list profile, certs, bundleIds please visit [test.rs](https://github.com/niuhuan/appstoreconnect-rs/blob/master/src/tests.rs)
+
+## features
+
+- [ ] App Store
+  - [ ] Apps
+    - [ ] List Apps
+- [X] Bundle IDs
+    - [x] List Bundle IDs
+- [ ] Bundle ID Capabilities
+- [x] Certificates
+    - [x] List and Download Certificates
+    - [ ] Create a Certificate
+    - [ ] Revoke a Certificate
+- [x] Devices
+    - [x] Register a New Device
+    - [x] List Devices
+- [x] Profiles
+    - [x] Create a Profile
+    - [x] List and Download Profiles
