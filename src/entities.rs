@@ -194,7 +194,8 @@ pub struct BundleId {
 pub struct BundleIdAttributes {
     pub name: String,
     pub identifier: String,
-    pub platform: String, // UNIVERSAL ?
+    pub platform: String,
+    // UNIVERSAL ?
     #[serde(rename = "seedId")]
     pub seed_id: String,
 }
@@ -266,8 +267,10 @@ pub struct CertificateAttributes {
     pub display_name: String,
     pub name: String,
     #[serde(rename = "csrContent")]
-    pub csr_content: serde_json::Value, // null
-    pub platform: Option<String>, // "IOS"/ null => IOS / MAC_OS ????
+    pub csr_content: serde_json::Value,
+    // null
+    pub platform: Option<String>,
+    // "IOS"/ null => IOS / MAC_OS ????
     #[serde(rename = "expirationDate")]
     pub expiration_date: String,
     #[serde(rename = "certificateType")]
@@ -519,7 +522,8 @@ pub struct Device {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DeviceAttributes {
     #[serde(rename = "addedDate")]
-    pub added_date: DateTime<Utc>, // "2022-12-10T12:02:45.000+00:00"
+    pub added_date: DateTime<Utc>,
+    // "2022-12-10T12:02:45.000+00:00"
     pub name: String,
     #[serde(rename = "deviceClass")]
     pub device_class: String,

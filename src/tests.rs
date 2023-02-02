@@ -1,4 +1,5 @@
 use base64::DecodeError;
+
 use crate::entities::{
     BundleIdPlatform, BundleIdQuery, BundleIdsType, CertificateQuery, CertificatesType,
     DeviceCreateRequest, DeviceCreateRequestData, DeviceCreateRequestDataAttributes, DeviceQuery,
