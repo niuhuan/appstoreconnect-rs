@@ -529,7 +529,7 @@ pub struct DeviceAttributes {
     pub device_class: String,
     pub model: Option<String>,
     pub udid: String,
-    pub platform: String,
+    pub platform: BundleIdPlatform,
     pub status: DeviceStatus,
 }
 
