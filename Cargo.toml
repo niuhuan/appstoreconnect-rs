@@ -6,8 +6,6 @@ description = "appstoreconnect client"
 license = "MIT"
 repository = "https://github.com/niuhuan/appstoreconnect-rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 jsonwebtoken = "8"

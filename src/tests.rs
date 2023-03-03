@@ -43,6 +43,12 @@ where
 }
 
 #[tokio::test]
+async fn test_apps() -> Result<()> {
+    print(gen_client()?.apps(BundleIdQuery::default()).await);
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_bundle_ids() -> Result<()> {
     print(gen_client()?.bundle_ids(BundleIdQuery::default()).await);
     Ok(())

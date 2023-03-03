@@ -97,6 +97,18 @@ impl Client {
         }
     }
 
+    // https://developer.apple.com/documentation/appstoreconnectapi/list_apps
+
+    pub async fn apps(&self, bundle_id_query: BundleIdQuery) -> Result<PageResponse<App>> {
+        self.request(
+            Method::GET,
+            "https://api.appstoreconnect.apple.com/v1/apps",
+            Some(bundle_id_query.queries()),
+            None,
+        )
+        .await
+    }
+
     // https://developer.apple.com/documentation/appstoreconnectapi/list_bundle_ids
 
     pub async fn bundle_ids(
