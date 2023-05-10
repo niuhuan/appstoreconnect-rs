@@ -41,7 +41,8 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
 
 - [ ] App Store
   - [ ] Apps
-    - [ ] List Apps
+    - [x] List Apps
+    - [ ] Modify an App
   - [ ] Builds
 - [X] Bundle IDs
     - [x] List Bundle IDs
