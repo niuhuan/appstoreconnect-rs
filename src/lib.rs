@@ -120,12 +120,12 @@ impl Client {
 
     pub async fn certificates(
         &self,
-        bundle_id_query: CertificateQuery,
+        certificate_query: CertificateQuery,
     ) -> Result<PageResponse<Certificate>> {
         self.request(
             Method::GET,
             "https://api.appstoreconnect.apple.com/v1/certificates",
-            Some(bundle_id_query.queries()),
+            Some(certificate_query.queries()),
             None,
         )
         .await
@@ -133,6 +133,23 @@ impl Client {
 
     pub async fn certificates_by_url(&self, url: &str) -> Result<PageResponse<Certificate>> {
         self.request(Method::GET, url, None, None).await
+    }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/revoke_a_certificate
+
+    pub async fn revoke_a_certificate(&self, certificate_id: impl AsRef<str>) -> Result<()> {
+        self.request(
+            Method::DELETE,
+            format!(
+                "https://api.appstoreconnect.apple.com/v1/certificates/{}",
+                certificate_id.as_ref()
+            )
+            .as_str(),
+            None,
+            None,
+        )
+        .await?;
+        Ok(())
     }
 
     // https://developer.apple.com/documentation/appstoreconnectapi/list_and_download_profiles

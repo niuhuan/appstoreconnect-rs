@@ -526,7 +526,7 @@ pub struct DeviceAttributes {
     // "2022-12-10T12:02:45.000+00:00"
     pub name: String,
     #[serde(rename = "deviceClass")]
-    pub device_class: String,
+    pub device_class: DeviceClass,
     pub model: Option<String>,
     pub udid: String,
     pub platform: BundleIdPlatform,
@@ -564,6 +564,15 @@ pub struct DeviceCreateRequestDataAttributes {
     pub platform: BundleIdPlatform,
     pub udid: String,
 }
+
+enum_str!(DeviceClass {
+    AppleWatch("APPLE_WATCH"),
+    Ipad("IPAD"),
+    Iphone("IPHONE"),
+    Ipod("IPOD"),
+    AppleTv("APPLE_TV"),
+    Mac("MAC"),
+});
 
 enum_str!(BundleIdPlatform {
     Ios("IOS"),

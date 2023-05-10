@@ -133,3 +133,13 @@ async fn test_register_devices() -> Result<()> {
     );
     Ok(())
 }
+
+#[tokio::test]
+async fn test_revoke_a_certificate() -> Result<()> {
+    print(
+        gen_client()?
+            .revoke_a_certificate("87792Q0000".to_string())
+            .await,
+    );
+    Ok(())
+}

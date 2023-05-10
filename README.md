@@ -42,16 +42,20 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
 - [ ] App Store
   - [ ] Apps
     - [ ] List Apps
+  - [ ] Builds
 - [X] Bundle IDs
     - [x] List Bundle IDs
 - [ ] Bundle ID Capabilities
 - [x] Certificates
     - [x] List and Download Certificates
     - [ ] Create a Certificate
-    - [ ] Revoke a Certificate
+    - [x] Revoke a Certificate
 - [x] Devices
     - [x] Register a New Device
     - [x] List Devices
 - [x] Profiles
     - [x] Create a Profile
     - [x] List and Download Profiles
+- [ ] Users
+- [ ] User Invitations
+- [ ] Sandbox Testers
