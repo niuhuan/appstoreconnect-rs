@@ -530,7 +530,7 @@ pub struct CertificateAttributes {
     pub platform: Option<String>,
     // "IOS"/ null => IOS / MAC_OS ????
     #[serde(rename = "expirationDate")]
-    pub expiration_date: String,
+    pub expiration_date: DateTime<Utc>,
     #[serde(rename = "certificateType")]
     pub certificate_type: String,
 }
