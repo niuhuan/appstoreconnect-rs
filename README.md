@@ -57,6 +57,7 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
 - [x] Profiles
     - [x] Create a Profile
     - [x] List and Download Profiles
+    - [x] Delete a Profile
 - [ ] Users
 - [ ] User Invitations
 - [ ] Sandbox Testers

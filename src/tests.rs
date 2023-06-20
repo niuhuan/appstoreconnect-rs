@@ -109,6 +109,12 @@ async fn test_profiles() -> Result<()> {
 }
 
 #[tokio::test]
+async fn test_delete_a_profile() -> Result<()> {
+    print(gen_client()?.delete_a_profile("4H6J3W0000").await);
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_devices() -> Result<()> {
     print(
         gen_client()?

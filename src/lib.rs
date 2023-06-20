@@ -63,13 +63,13 @@ impl Client {
         Ok(lock.token.clone())
     }
 
-    async fn request<T: for<'de> serde::Deserialize<'de>>(
+    async fn request_raw(
         &self,
         method: Method,
         url: &str,
         query: Option<Vec<(String, String)>>,
         body: Option<serde_json::Value>,
-    ) -> Result<T> {
+    ) -> Result<(u16, String)> {
         let request = self
             .agent
             .request(method, url)
@@ -87,11 +87,37 @@ impl Client {
         };
         let resp = resp.await?;
         let status = resp.status();
-        if status.as_u16() / 100 == 2 {
-            let text = resp.text().await?;
+        let text = resp.text().await?;
+        Ok((status.as_u16(), text))
+    }
+
+    async fn request<T: for<'de> serde::Deserialize<'de>>(
+        &self,
+        method: Method,
+        url: &str,
+        query: Option<Vec<(String, String)>>,
+        body: Option<serde_json::Value>,
+    ) -> Result<T> {
+        let (status, text) = self.request_raw(method, url, query, body).await?;
+        if status / 100 == 2 {
             Ok(serde_json::from_str(text.as_str())?)
         } else {
-            let text = resp.text().await?;
+            let e: ServerErrors = serde_json::from_str(text.as_str())?;
+            Err(Error::ServerErrors(e))
+        }
+    }
+
+    async fn request_none_body(
+        &self,
+        method: Method,
+        url: &str,
+        query: Option<Vec<(String, String)>>,
+        body: Option<serde_json::Value>,
+    ) -> Result<()> {
+        let (status, text) = self.request_raw(method, url, query, body).await?;
+        if status / 100 == 2 {
+            Ok(())
+        } else {
             let e: ServerErrors = serde_json::from_str(text.as_str())?;
             Err(Error::ServerErrors(e))
         }
@@ -150,7 +176,7 @@ impl Client {
     // https://developer.apple.com/documentation/appstoreconnectapi/revoke_a_certificate
 
     pub async fn revoke_a_certificate(&self, certificate_id: impl AsRef<str>) -> Result<()> {
-        self.request(
+        self.request_none_body(
             Method::DELETE,
             format!(
                 "https://api.appstoreconnect.apple.com/v1/certificates/{}",
@@ -191,6 +217,22 @@ impl Client {
             "https://api.appstoreconnect.apple.com/v1/profiles",
             None,
             Some(serde_json::to_value(request)?),
+        )
+        .await
+    }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/delete_a_profile
+
+    pub async fn delete_a_profile(&self, profile_id: &str) -> Result<()> {
+        self.request_none_body(
+            Method::DELETE,
+            format!(
+                "https://api.appstoreconnect.apple.com/v1/profiles/{}",
+                profile_id
+            )
+            .as_str(),
+            None,
+            None,
         )
         .await
     }
