@@ -1,7 +1,8 @@
 app store connect
 =================
 
-This repository is an `AppStoreConnect` api client, allow your invoke api in Rust. The full api docs in [here](https://developer.apple.com/documentation/appstoreconnectapi). 
+This repository is an `AppStoreConnect` api client, allow your invoke api in Rust. The full api docs
+in [here](https://developer.apple.com/documentation/appstoreconnectapi).
 
 ## Easily to use
 
@@ -9,16 +10,16 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
 
 2. Adding appstoreconnect
 
-    Run this command in your terminal to add the latest version of `appstoreconnect`.
+   Run this command in your terminal to add the latest version of `appstoreconnect`.
     ```shell
     $ cargo add appstoreconnect
     ```
 
 3. build and use the client
 
-    `iss` : `Issuer ID`  <br />
-    `kid` : `KeyId`  <br />
-    `ec_der` : `key.p8` base64 content  <br />
+   `iss` : `Issuer ID`  <br />
+   `kid` : `KeyId`  <br />
+   `ec_der` : `key.p8` base64 content  <br />
     ```rust
     #[tokio::main]
     async fn main() -> Result<()> {
@@ -37,15 +38,16 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
     }
     ```
 
-4. More example : Create or list profile, certs, bundleIds please visit [test.rs](https://github.com/niuhuan/appstoreconnect-rs/blob/master/src/tests.rs)
+4. More example : Create or list profile, certs, bundleIds please
+   visit [test.rs](https://github.com/niuhuan/appstoreconnect-rs/blob/master/src/tests.rs)
 
 ## features
 
 - [ ] App Store
-  - [ ] Apps
-    - [x] List Apps
-    - [ ] Modify an App
-  - [ ] Builds
+    - [ ] Apps
+        - [x] List Apps
+        - [ ] Modify an App
+    - [ ] Builds
 - [X] Bundle IDs
     - [x] List Bundle IDs
 - [ ] Bundle ID Capabilities
@@ -61,5 +63,11 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
     - [x] List and Download Profiles
     - [x] Delete a Profile
 - [ ] Users
+    - [X] List users
+    - [ ] Read User Information
+    - [ ] Modify a User Account
+    - [ ] App Accesses
+        - [ ] List All Apps Visible to a User
+        - [ ] Modify a User Account
 - [ ] User Invitations
 - [ ] Sandbox Testers

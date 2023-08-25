@@ -267,6 +267,22 @@ impl Client {
         )
         .await
     }
+
+    // https://api.appstoreconnect.apple.com/v1/users
+
+    pub async fn users(&self, users_query: UsersQuery) -> Result<PageResponse<User>> {
+        self.request(
+            Method::GET,
+            "https://api.appstoreconnect.apple.com/v1/users",
+            Some(users_query.queries()),
+            None,
+        )
+        .await
+    }
+
+    pub async fn users_by_url(&self, url: &str) -> Result<PageResponse<User>> {
+        self.request(Method::GET, url, None, None).await
+    }
 }
 
 #[derive(Default, Debug, Clone)]

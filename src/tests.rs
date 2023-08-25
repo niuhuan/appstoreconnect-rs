@@ -11,7 +11,7 @@ use crate::entities::{
     ProfileCreateRequestDataRelationshipsDevices, ProfileCreateRequestDataRelationshipsDevicesData,
     ProfileCreateRequestRelationships, ProfileCreateRequestType, ProfileQuery, ProfileType,
 };
-use crate::{Client, ClientBuilder, Error, Result};
+use crate::{Client, ClientBuilder, Error, Result, UsersQuery};
 
 impl From<DecodeError> for Error {
     fn from(value: DecodeError) -> Self {
@@ -153,5 +153,11 @@ async fn test_revoke_a_certificate() -> Result<()> {
             .revoke_a_certificate("87792Q0000".to_string())
             .await,
     );
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_users() -> Result<()> {
+    print(gen_client()?.users(UsersQuery::default()).await);
     Ok(())
 }
