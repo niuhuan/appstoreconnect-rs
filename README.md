@@ -64,7 +64,7 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
     - [x] Delete a Profile
 - [ ] Users
     - [X] List users
-    - [ ] Read User Information
+    - [X] Read User Information
     - [ ] Modify a User Account
     - [ ] App Accesses
         - [ ] List All Apps Visible to a User

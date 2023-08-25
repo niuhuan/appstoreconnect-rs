@@ -283,6 +283,18 @@ impl Client {
     pub async fn users_by_url(&self, url: &str) -> Result<PageResponse<User>> {
         self.request(Method::GET, url, None, None).await
     }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/read_user_information
+
+    pub async fn user_information(&self, user_id: &str) -> Result<EntityResponse<User>> {
+        self.request(
+            Method::GET,
+            format!("https://api.appstoreconnect.apple.com/v1/users/{}", user_id).as_str(),
+            None,
+            None,
+        )
+        .await
+    }
 }
 
 #[derive(Default, Debug, Clone)]
