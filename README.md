@@ -16,7 +16,9 @@ This repository is an `AppStoreConnect` api client, allow your invoke api in Rus
 
 3. build and use the client
 
-    `iss` => `Issuer ID` / `kid` => `KeyId` / `ec_der` => key.p8 base64 content
+    `iss` : `Issuer ID`  <br />
+    `kid` : `KeyId`  <br />
+    `ec_der` : `key.p8` base64 content  <br />
     ```rust
     #[tokio::main]
     async fn main() -> Result<()> {
