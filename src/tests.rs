@@ -65,10 +65,10 @@ async fn test_certificates() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_create_a_profile() -> Result<()> {
+async fn test_create_profile() -> Result<()> {
     print(
         gen_client()?
-            .create_a_profile(ProfileCreateRequest {
+            .create_profile(ProfileCreateRequest {
                 data: ProfileCreateRequestData {
                     attributes: ProfileCreateRequestAttributes {
                         name: "profileName".to_string(),
@@ -109,8 +109,8 @@ async fn test_profiles() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_delete_a_profile() -> Result<()> {
-    print(gen_client()?.delete_a_profile("4H6J3W0000").await);
+async fn test_delete_profile() -> Result<()> {
+    print(gen_client()?.delete_profile("4H6J3W0000").await);
     Ok(())
 }
 
@@ -131,7 +131,7 @@ async fn test_devices() -> Result<()> {
 async fn test_register_devices() -> Result<()> {
     print(
         gen_client()?
-            .register_a_new_device(DeviceCreateRequest {
+            .register_new_device(DeviceCreateRequest {
                 data: DeviceCreateRequestData {
                     type_field: DeviceType::Devices,
                     attributes: DeviceCreateRequestDataAttributes {
@@ -147,10 +147,10 @@ async fn test_register_devices() -> Result<()> {
 }
 
 #[tokio::test]
-async fn test_revoke_a_certificate() -> Result<()> {
+async fn test_revokec_certificate() -> Result<()> {
     print(
         gen_client()?
-            .revoke_a_certificate("87792Q0000".to_string())
+            .revoke_certificate("87792Q0000".to_string())
             .await,
     );
     Ok(())

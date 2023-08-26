@@ -175,7 +175,7 @@ impl Client {
 
     // https://developer.apple.com/documentation/appstoreconnectapi/revoke_a_certificate
 
-    pub async fn revoke_a_certificate(&self, certificate_id: impl AsRef<str>) -> Result<()> {
+    pub async fn revoke_certificate(&self, certificate_id: impl AsRef<str>) -> Result<()> {
         self.request_none_body(
             Method::DELETE,
             format!(
@@ -208,7 +208,7 @@ impl Client {
 
     // https://developer.apple.com/documentation/appstoreconnectapi/create_a_profile
 
-    pub async fn create_a_profile(
+    pub async fn create_profile(
         &self,
         request: ProfileCreateRequest,
     ) -> Result<EntityResponse<Profile>> {
@@ -223,7 +223,7 @@ impl Client {
 
     // https://developer.apple.com/documentation/appstoreconnectapi/delete_a_profile
 
-    pub async fn delete_a_profile(&self, profile_id: &str) -> Result<()> {
+    pub async fn delete_profile(&self, profile_id: &str) -> Result<()> {
         self.request_none_body(
             Method::DELETE,
             format!(
@@ -255,7 +255,7 @@ impl Client {
 
     // https://developer.apple.com/documentation/appstoreconnectapi/register_a_new_device
 
-    pub async fn register_a_new_device(
+    pub async fn register_new_device(
         &self,
         request: DeviceCreateRequest,
     ) -> Result<EntityResponse<Device>> {
@@ -289,6 +289,34 @@ impl Client {
     pub async fn user_information(&self, user_id: &str) -> Result<EntityResponse<User>> {
         self.request(
             Method::GET,
+            format!("https://api.appstoreconnect.apple.com/v1/users/{}", user_id).as_str(),
+            None,
+            None,
+        )
+        .await
+    }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/modify_a_user_account
+
+    pub async fn modify_user(
+        &self,
+        user_id: &str,
+        data: UserUpdateRequest,
+    ) -> Result<EntityResponse<User>> {
+        self.request(
+            Method::PATCH,
+            format!("https://api.appstoreconnect.apple.com/v1/users/{}", user_id).as_str(),
+            None,
+            Some(serde_json::to_value(data)?),
+        )
+        .await
+    }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/remove_a_user_account
+
+    pub async fn remove_user(&self, user_id: &str) -> Result<()> {
+        self.request_none_body(
+            Method::DELETE,
             format!("https://api.appstoreconnect.apple.com/v1/users/{}", user_id).as_str(),
             None,
             None,

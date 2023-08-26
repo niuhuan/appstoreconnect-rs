@@ -899,3 +899,48 @@ enum_str!(Role{
     CloudManagedDeveloperId("CLOUD_MANAGED_DEVELOPER_ID"),
     CloudManagedAppDistribution("CLOUD_MANAGED_APP_DISTRIBUTION"),
 });
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequest {
+    pub data: UserUpdateRequestData,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequestData {
+    #[serde(rename = "type")]
+    pub type_field: UserType,
+    pub id: String,
+    pub attributes: UserUpdateRequestDataAttributes,
+    pub relationships: UserUpdateRequestDataRelationships,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequestDataAttributes {
+    pub roles: Vec<Role>,
+    #[serde(rename = "allAppsVisible")]
+    pub all_apps_visible: bool,
+    #[serde(rename = "provisioningAllowed")]
+    pub provisioning_allowed: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequestDataRelationships {
+    #[serde(rename = "visibleApps")]
+    pub visible_apps: UserUpdateRequestDataRelationshipsVisibleApps,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequestDataRelationshipsVisibleApps {
+    pub data: Vec<UserUpdateRequestDataRelationshipsVisibleAppsData>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserUpdateRequestDataRelationshipsVisibleAppsData {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub type_field: AppsType,
+}
+
+enum_str!(AppsType{
+    Apps("Apps"),
+});
