@@ -323,6 +323,24 @@ impl Client {
         )
         .await
     }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/list_all_apps_visible_to_a_user
+    // https://api.appstoreconnect.apple.com/v1/users/{id}/visibleApps
+
+    pub async fn user_visible_apps(
+        &self,
+        user_id: &str,
+        user_visible_apps_query: UserVisibleAppsQuery,
+    ) -> Result<PageResponse<App>> {
+        self.request(
+            Method::GET,
+            format!("https://api.appstoreconnect.apple.com/v1/users/{user_id}/visibleApps")
+                .as_str(),
+            Some(user_visible_apps_query.queries()),
+            None,
+        )
+        .await
+    }
 }
 
 #[derive(Default, Debug, Clone)]

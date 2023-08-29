@@ -11,7 +11,7 @@ use crate::entities::{
     ProfileCreateRequestDataRelationshipsDevices, ProfileCreateRequestDataRelationshipsDevicesData,
     ProfileCreateRequestRelationships, ProfileCreateRequestType, ProfileQuery, ProfileType,
 };
-use crate::{Client, ClientBuilder, Error, Result, UsersQuery};
+use crate::{Client, ClientBuilder, Error, Result, UserVisibleAppsQuery, UsersQuery};
 
 impl From<DecodeError> for Error {
     fn from(value: DecodeError) -> Self {
@@ -167,6 +167,19 @@ async fn test_user_information() -> Result<()> {
     print(
         gen_client()?
             .user_information("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+            .await,
+    );
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_user_visible_apps() -> Result<()> {
+    print(
+        gen_client()?
+            .user_visible_apps(
+                "00715d6b-4779-4041-a7ac-cb5b06287e2a",
+                UserVisibleAppsQuery::default(),
+            )
             .await,
     );
     Ok(())

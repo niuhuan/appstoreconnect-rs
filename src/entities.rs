@@ -234,7 +234,8 @@ pub struct AppRelationships {
     pub app_availability: AppAvailability,
     #[serde(rename = "inAppPurchases")]
     pub in_app_purchases: InAppPurchases,
-    #[serde(rename = "subscriptionGroups")]
+    // Exists in apps, missing field `subscriptionGroups` in user_visible_apps
+    #[serde(rename = "subscriptionGroups", default = "SubscriptionGroups::default")]
     pub subscription_groups: SubscriptionGroups,
     #[serde(rename = "gameCenterEnabledVersions")]
     pub game_center_enabled_versions: GameCenterEnabledVersions,
@@ -242,18 +243,29 @@ pub struct AppRelationships {
     pub perf_power_metrics: PerfPowerMetrics,
     #[serde(rename = "appCustomProductPages")]
     pub app_custom_product_pages: AppCustomProductPages,
-    #[serde(rename = "inAppPurchasesV2")]
+    // Exists in apps, missing field `inAppPurchasesV2` in user_visible_apps
+    #[serde(rename = "inAppPurchasesV2", default = "InAppPurchasesV2::default")]
     pub in_app_purchases_v2: InAppPurchasesV2,
-    #[serde(rename = "promotedPurchases")]
+    // Exists in apps, missing field `promotedPurchases` in user_visible_apps
+    #[serde(rename = "promotedPurchases", default = "PromotedPurchases::default")]
     pub promoted_purchases: PromotedPurchases,
     #[serde(rename = "appEvents")]
     pub app_events: AppEvents,
     #[serde(rename = "reviewSubmissions")]
     pub review_submissions: ReviewSubmissions,
-    #[serde(rename = "subscriptionGracePeriod")]
+    #[serde(
+        rename = "subscriptionGracePeriod",
+        default = "SubscriptionGracePeriod::default"
+    )]
     pub subscription_grace_period: SubscriptionGracePeriod,
     #[serde(rename = "customerReviews")]
     pub customer_reviews: CustomerReviews,
+    // Exists in user_visible_apps, not exists in apps
+    #[serde(
+        rename = "appStoreVersionExperimentsV2",
+        default = "AppStoreVersionExperimentsV2::default"
+    )]
+    pub app_store_version_experiments_v2: AppStoreVersionExperimentsV2,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -403,6 +415,11 @@ pub struct SubscriptionGracePeriod {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CustomerReviews {
+    pub links: SelfAndRelatedLinks,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AppStoreVersionExperimentsV2 {
     pub links: SelfAndRelatedLinks,
 }
 
@@ -849,6 +866,11 @@ query_params!(UsersQuery {
     filter_visible_apps("filter[visibleApps]",String),
     filter_username("filter[username]",String),
     limit_visible_apps("limit[visibleApps]",i64),
+});
+
+query_params!(UserVisibleAppsQuery {
+    limit("limit",i64),
+    fields_apps("fields[apps]",String),
 });
 
 enum_str!(UserSort{
