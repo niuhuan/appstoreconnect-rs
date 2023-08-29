@@ -66,8 +66,9 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
     - [X] List users
     - [X] Read User Information
     - [x] Modify a User Account
-    - [ ] App Accesses
-        - [ ] List All Apps Visible to a User
-        - [ ] Modify a User Account
+    - [x] App Accesses
+        - [x] List All Apps Visible to a User
+        - [ ] Add Visible Apps to a User
+        - [ ] Remove Visible Apps from a User
 - [ ] User Invitations
 - [ ] Sandbox Testers
