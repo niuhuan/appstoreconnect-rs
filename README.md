@@ -51,6 +51,7 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
 - [X] Bundle IDs
     - [x] List Bundle IDs
     - [x] Register New Bundle ID
+    - [x] List Bundle ID capabilities
 - [ ] Bundle ID Capabilities
 - [x] Certificates
     - [x] List and Download Certificates

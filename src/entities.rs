@@ -130,12 +130,12 @@ pub struct EntityResponse<T> {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PageResponse<T> {
     pub data: Vec<T>,
-    pub links: PageLinks,
-    pub meta: PageMeta,
+    pub links: PagedDocumentLinks,
+    pub meta: PagingInformation,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PageLinks {
+pub struct PagedDocumentLinks {
     #[serde(rename = "self")]
     pub self_field: String,
     pub next: Option<String>,
@@ -143,7 +143,7 @@ pub struct PageLinks {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PageMeta {
+pub struct PagingInformation {
     pub paging: Paging,
 }
 
@@ -484,13 +484,13 @@ pub struct BundleIdRelationships {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BundleIdCapabilities {
-    pub meta: PageMeta,
+    pub meta: PagingInformation,
     pub links: SelfAndRelatedLinks,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BundleIdProfiles {
-    pub meta: PageMeta,
+    pub meta: PagingInformation,
     pub links: SelfAndRelatedLinks,
 }
 
@@ -657,13 +657,13 @@ pub struct BundleIdMeta {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Certificates {
-    pub meta: PageMeta,
+    pub meta: PagingInformation,
     pub links: SelfAndRelatedLinks,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Devices {
-    pub meta: PageMeta,
+    pub meta: PagingInformation,
     pub links: SelfAndRelatedLinks,
 }
 
@@ -1007,3 +1007,64 @@ pub struct BundleIdCreateRequestDataAttributes {
     #[serde(rename = "seedId")]
     pub seed_id: Option<String>,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCapabilitiesWithoutIncludesResponse {
+    pub data: Vec<BundleIdCapability>,
+    pub links: PagedDocumentLinks,
+    pub meta: PagingInformation,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCapability {
+    #[serde(rename = "type")]
+    pub type_field: BundleIdCapabilitiesType,
+    pub id: String,
+    pub attributes: BundleIdCapabilityAttributes,
+    pub links: SelfLinks,
+}
+
+enum_str!(BundleIdCapabilitiesType{
+    BundleIdCapabilities("bundleIdCapabilities"),
+});
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCapabilityAttributes {
+    #[serde(rename = "capabilityType")]
+    pub capability_type: CapabilityType,
+    #[serde(rename = "settings")]
+    pub settings: Option<serde_json::Value>,
+}
+
+enum_str!(CapabilityType{
+    Icloud("ICLOUD"),
+    InAppPurchase("IN_APP_PURCHASE"),
+    GameCenter("GAME_CENTER"),
+    PushNotifications("PUSH_NOTIFICATIONS"),
+    Wallet("WALLET"),
+    InterAppAudio("INTER_APP_AUDIO"),
+    Maps("MAPS"),
+    AssociatedDomains("ASSOCIATED_DOMAINS"),
+    PersonalVpn("PERSONAL_VPN"),
+    AppGroups("APP_GROUPS"),
+    Healthkit("HEALTHKIT"),
+    Homekit("HOMEKIT"),
+    WirelessAccessoryConfiguration("WIRELESS_ACCESSORY_CONFIGURATION"),
+    ApplePay("APPLE_PAY"),
+    DataProtection("DATA_PROTECTION"),
+    Sirikit("SIRIKIT"),
+    NetworkExtensions("NETWORK_EXTENSIONS"),
+    Multipath("MULTIPATH"),
+    HotSpot("HOT_SPOT"),
+    NfcTagReading("NFC_TAG_READING"),
+    Classkit("CLASSKIT"),
+    AutofillCredentialProvider("AUTOFILL_CREDENTIAL_PROVIDER"),
+    AccessWifiInformation("ACCESS_WIFI_INFORMATION"),
+    NetworkCustomProtocol("NETWORK_CUSTOM_PROTOCOL"),
+    CoremediaHlsLowLatency("COREMEDIA_HLS_LOW_LATENCY"),
+    SystemExtensionInstall("SYSTEM_EXTENSION_INSTALL"),
+    UserManagement("USER_MANAGEMENT"),
+    AppleIdAuth("APPLE_ID_AUTH"),
+    UserNotificationsCommunication("USERNOTIFICATIONS_COMMUNICATION"),
+    FamilyControls("FAMILY_CONTROLS"),
+});

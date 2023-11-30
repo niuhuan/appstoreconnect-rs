@@ -228,3 +228,9 @@ async fn test_register_new_bundle_id() -> Result<()> {
     );
     Ok(())
 }
+
+#[tokio::test]
+async fn test_bundle_id_capabilities() -> Result<()> {
+    print(gen_client()?.bundle_id_capabilities("XXXXXXXXXXX").await);
+    Ok(())
+}

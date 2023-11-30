@@ -165,6 +165,26 @@ impl Client {
         .await
     }
 
+    // https://developer.apple.com/documentation/appstoreconnectapi/list_all_capabilities_for_a_bundle_id
+    // GET https://api.appstoreconnect.apple.com/v1/bundleIds/{id}/bundleIdCapabilities
+
+    pub async fn bundle_id_capabilities(
+        &self,
+        bundle_id: &str,
+    ) -> Result<BundleIdCapabilitiesWithoutIncludesResponse> {
+        self.request(
+            Method::GET,
+            format!(
+                "https://api.appstoreconnect.apple.com/v1/bundleIds/{}/bundleIdCapabilities",
+                bundle_id
+            )
+            .as_str(),
+            None,
+            None,
+        )
+        .await
+    }
+
     // https://developer.apple.com/documentation/appstoreconnectapi/list_and_download_certificates
 
     pub async fn certificates(
