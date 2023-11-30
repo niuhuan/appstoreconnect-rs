@@ -1,7 +1,8 @@
-use base64::DecodeError;
+use base64::{DecodeError, Engine};
 
 use crate::client::{Client, ClientBuilder};
 use crate::entities::{
+    BundleIdCreateRequest, BundleIdCreateRequestData, BundleIdCreateRequestDataAttributes,
     BundleIdPlatform, BundleIdQuery, BundleIdsType, CertificateCreateRequest,
     CertificateCreateRequestData, CertificateCreateRequestDataAttributes, CertificateQuery,
     CertificateType, CertificatesType, DeviceCreateRequest, DeviceCreateRequestData,
@@ -27,7 +28,7 @@ fn gen_client() -> Result<Client> {
     ClientBuilder::default()
         .with_iss(env!("iss"))
         .with_kid(env!("kid"))
-        .with_ec_der(base64::decode(env!("ec_der"))?)
+        .with_ec_der(base64::prelude::BASE64_STANDARD.decode(env!("ec_der"))?)
         .build()
 }
 
@@ -201,6 +202,26 @@ async fn test_create_certificate() -> Result<()> {
                         certificate_type: CertificateType::MacAppDevelopment,
                         csr_content: c,
                     },
+                },
+            })
+            .await,
+    );
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_register_new_bundle_id() -> Result<()> {
+    print(
+        gen_client()?
+            .register_new_bundle_id(BundleIdCreateRequest {
+                data: BundleIdCreateRequestData {
+                    attributes: BundleIdCreateRequestDataAttributes {
+                        identifier: "com.example.app".to_string(),
+                        name: "Example App".to_string(),
+                        platform: BundleIdPlatform::Ios,
+                        seed_id: None,
+                    },
+                    type_field: BundleIdsType::BundleIds,
                 },
             })
             .await,

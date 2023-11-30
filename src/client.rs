@@ -149,6 +149,22 @@ impl Client {
         self.request(Method::GET, url, None, None).await
     }
 
+    // https://developer.apple.com/documentation/appstoreconnectapi/register_a_new_bundle_id
+    // POST https://api.appstoreconnect.apple.com/v1/bundleIds
+
+    pub async fn register_new_bundle_id(
+        &self,
+        request: BundleIdCreateRequest,
+    ) -> Result<EntityResponse<BundleId>> {
+        self.request(
+            Method::POST,
+            "https://api.appstoreconnect.apple.com/v1/bundleIds",
+            None,
+            Some(serde_json::to_value(request)?),
+        )
+        .await
+    }
+
     // https://developer.apple.com/documentation/appstoreconnectapi/list_and_download_certificates
 
     pub async fn certificates(
@@ -339,7 +355,6 @@ impl Client {
 
     // https://developer.apple.com/documentation/appstoreconnectapi/create_a_certificate
     // https://api.appstoreconnect.apple.com/v1/certificates
-
 
     pub async fn create_certificate(
         &self,

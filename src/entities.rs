@@ -986,3 +986,24 @@ pub struct CertificateCreateRequestDataAttributes {
     #[serde(rename = "csrContent")]
     pub csr_content: String,
 }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCreateRequest {
+    pub data: BundleIdCreateRequestData,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCreateRequestData {
+    #[serde(rename = "type")]
+    pub type_field: BundleIdsType,
+    pub attributes: BundleIdCreateRequestDataAttributes,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct BundleIdCreateRequestDataAttributes {
+    pub name: String,
+    pub identifier: String,
+    pub platform: BundleIdPlatform,
+    #[serde(rename = "seedId")]
+    pub seed_id: Option<String>,
+}
