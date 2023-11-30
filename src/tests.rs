@@ -1,17 +1,21 @@
 use base64::DecodeError;
 
+use crate::client::{Client, ClientBuilder};
 use crate::entities::{
-    BundleIdPlatform, BundleIdQuery, BundleIdsType, CertificateQuery, CertificatesType,
-    DeviceCreateRequest, DeviceCreateRequestData, DeviceCreateRequestDataAttributes, DeviceQuery,
-    DeviceType, ProfileCreateRequest, ProfileCreateRequestAttributes, ProfileCreateRequestData,
+    BundleIdPlatform, BundleIdQuery, BundleIdsType, CertificateCreateRequest,
+    CertificateCreateRequestData, CertificateCreateRequestDataAttributes, CertificateQuery,
+    CertificateType, CertificatesType, DeviceCreateRequest, DeviceCreateRequestData,
+    DeviceCreateRequestDataAttributes, DeviceQuery, DeviceType, ProfileCreateRequest,
+    ProfileCreateRequestAttributes, ProfileCreateRequestData,
     ProfileCreateRequestDataRelationshipsBundleId,
     ProfileCreateRequestDataRelationshipsBundleIdData,
     ProfileCreateRequestDataRelationshipsCertificates,
     ProfileCreateRequestDataRelationshipsCertificatesData,
     ProfileCreateRequestDataRelationshipsDevices, ProfileCreateRequestDataRelationshipsDevicesData,
     ProfileCreateRequestRelationships, ProfileCreateRequestType, ProfileQuery, ProfileType,
+    UserVisibleAppsQuery, UsersQuery,
 };
-use crate::{Client, ClientBuilder, Error, Result, UserVisibleAppsQuery, UsersQuery};
+use crate::error::{Error, Result};
 
 impl From<DecodeError> for Error {
     fn from(value: DecodeError) -> Self {
@@ -177,9 +181,28 @@ async fn test_user_visible_apps() -> Result<()> {
     print(
         gen_client()?
             .user_visible_apps(
-                "00715d6b-4779-4041-a7ac-cb5b06287e2a",
+                "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
                 UserVisibleAppsQuery::default(),
             )
+            .await,
+    );
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_create_certificate() -> Result<()> {
+    let c = std::fs::read_to_string("target/tmp/csr.csr").unwrap();
+    print(
+        gen_client()?
+            .create_certificate(CertificateCreateRequest {
+                data: CertificateCreateRequestData {
+                    type_field: CertificatesType::Certificates,
+                    attributes: CertificateCreateRequestDataAttributes {
+                        certificate_type: CertificateType::MacAppDevelopment,
+                        csr_content: c,
+                    },
+                },
+            })
             .await,
     );
     Ok(())

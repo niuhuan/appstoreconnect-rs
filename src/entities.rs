@@ -966,3 +966,23 @@ pub struct UserUpdateRequestDataRelationshipsVisibleAppsData {
 enum_str!(AppsType{
     Apps("Apps"),
 });
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CertificateCreateRequest {
+    pub data: CertificateCreateRequestData,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CertificateCreateRequestData {
+    #[serde(rename = "type")]
+    pub type_field: CertificatesType,
+    pub attributes: CertificateCreateRequestDataAttributes,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CertificateCreateRequestDataAttributes {
+    #[serde(rename = "certificateType")]
+    pub certificate_type: CertificateType,
+    #[serde(rename = "csrContent")]
+    pub csr_content: String,
+}

@@ -53,7 +53,7 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
 - [ ] Bundle ID Capabilities
 - [x] Certificates
     - [x] List and Download Certificates
-    - [ ] Create a Certificate
+    - [x] Create a Certificate
     - [x] Revoke a Certificate
 - [x] Devices
     - [x] Register a New Device

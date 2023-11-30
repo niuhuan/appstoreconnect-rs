@@ -336,6 +336,23 @@ impl Client {
         )
         .await
     }
+
+    // https://developer.apple.com/documentation/appstoreconnectapi/create_a_certificate
+    // https://api.appstoreconnect.apple.com/v1/certificates
+
+
+    pub async fn create_certificate(
+        &self,
+        request: CertificateCreateRequest,
+    ) -> Result<EntityResponse<Certificate>> {
+        self.request(
+            Method::POST,
+            "https://api.appstoreconnect.apple.com/v1/certificates",
+            None,
+            Some(serde_json::to_value(request)?),
+        )
+        .await
+    }
 }
 
 #[derive(Default, Debug, Clone)]
