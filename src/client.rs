@@ -376,6 +376,18 @@ impl Client {
     // https://developer.apple.com/documentation/appstoreconnectapi/create_a_certificate
     // https://api.appstoreconnect.apple.com/v1/certificates
 
+    // csrContent:
+    //
+    // 1.
+    // create an private key:
+    //     `openssl genpkey -algorithm RSA -out key.key -aes256`
+    // or create an private key without encryption:
+    //     `openssl genpkey -algorithm RSA -out key.key`
+    //
+    // 2.
+    // create a certificate signing request:
+    //     `openssl req -new -key key.key -out csr.csr`
+
     pub async fn create_certificate(
         &self,
         request: CertificateCreateRequest,

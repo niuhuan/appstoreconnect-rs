@@ -19,7 +19,7 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
 
    `iss` : `Issuer ID`  <br />
    `kid` : `KeyId`  <br />
-   `ec_der` : `key.p8` base64 content  <br />
+   `ec_der` : base64 text in `key.p8` remove `\n` <br />
     ```rust
     #[tokio::main]
     async fn main() -> Result<()> {
