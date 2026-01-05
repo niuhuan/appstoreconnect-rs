@@ -22,6 +22,7 @@ impl Error {
         })
     }
 
+    #[allow(dead_code)]
     pub(crate) fn http(status: u16, body: impl Into<String>) -> Self {
         Self::Http(HttpError {
             status,
