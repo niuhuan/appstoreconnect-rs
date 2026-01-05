@@ -17,6 +17,7 @@ use crate::entities::{
     UserVisibleAppsQuery, UsersQuery,
 };
 use crate::error::{Error, Result};
+use crate::query::Query;
 
 impl From<DecodeError> for Error {
     fn from(value: DecodeError) -> Self {
@@ -25,10 +26,16 @@ impl From<DecodeError> for Error {
 }
 
 fn gen_client() -> Result<Client> {
+    let iss = std::env::var("APPSTORECONNECT_ISS")
+        .map_err(|_| Error::message("missing env APPSTORECONNECT_ISS"))?;
+    let kid = std::env::var("APPSTORECONNECT_KID")
+        .map_err(|_| Error::message("missing env APPSTORECONNECT_KID"))?;
+    let ec_der_b64 = std::env::var("APPSTORECONNECT_EC_DER_BASE64")
+        .map_err(|_| Error::message("missing env APPSTORECONNECT_EC_DER_BASE64"))?;
     ClientBuilder::default()
-        .with_iss(env!("iss"))
-        .with_kid(env!("kid"))
-        .with_ec_der(base64::prelude::BASE64_STANDARD.decode(env!("ec_der"))?)
+        .with_iss(iss)
+        .with_kid(kid)
+        .with_ec_der(base64::prelude::BASE64_STANDARD.decode(ec_der_b64)?)
         .build()
 }
 
@@ -48,18 +55,21 @@ where
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_apps() -> Result<()> {
     print(gen_client()?.apps(BundleIdQuery::default()).await);
     Ok(())
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_bundle_ids() -> Result<()> {
     print(gen_client()?.bundle_ids(BundleIdQuery::default()).await);
     Ok(())
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_certificates() -> Result<()> {
     print(
         gen_client()?
@@ -70,6 +80,7 @@ async fn test_certificates() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_create_profile() -> Result<()> {
     print(
         gen_client()?
@@ -108,18 +119,21 @@ async fn test_create_profile() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_profiles() -> Result<()> {
     print(gen_client()?.profiles(ProfileQuery::default()).await);
     Ok(())
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_delete_profile() -> Result<()> {
     print(gen_client()?.delete_profile("4H6J3W0000").await);
     Ok(())
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_devices() -> Result<()> {
     print(
         gen_client()?
@@ -133,6 +147,7 @@ async fn test_devices() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_register_devices() -> Result<()> {
     print(
         gen_client()?
@@ -152,6 +167,7 @@ async fn test_register_devices() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_revokec_certificate() -> Result<()> {
     print(
         gen_client()?
@@ -162,12 +178,14 @@ async fn test_revokec_certificate() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_users() -> Result<()> {
     print(gen_client()?.users(UsersQuery::default()).await);
     Ok(())
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_user_information() -> Result<()> {
     print(
         gen_client()?
@@ -178,6 +196,7 @@ async fn test_user_information() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_user_visible_apps() -> Result<()> {
     print(
         gen_client()?
@@ -191,6 +210,7 @@ async fn test_user_visible_apps() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_create_certificate() -> Result<()> {
     let c = std::fs::read_to_string("target/tmp/csr.csr").unwrap();
     print(
@@ -210,6 +230,7 @@ async fn test_create_certificate() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_register_new_bundle_id() -> Result<()> {
     print(
         gen_client()?
@@ -230,7 +251,50 @@ async fn test_register_new_bundle_id() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn test_bundle_id_capabilities() -> Result<()> {
     print(gen_client()?.bundle_id_capabilities("XXXXXXXXXXX").await);
     Ok(())
+}
+
+#[test]
+fn test_query_builder() {
+    let query = Query::new()
+        .include("bundleIdCapabilities")
+        .fields("apps", ["name", "bundleId"])
+        .filter("bundleId", "com.example.app")
+        .sort("-name")
+        .page_limit(50)
+        .page_cursor("abc");
+
+    let pairs = query.build();
+    assert!(pairs.contains(&("include".to_string(), "bundleIdCapabilities".to_string())));
+    assert!(pairs.contains(&(
+        "fields[apps]".to_string(),
+        "name,bundleId".to_string()
+    )));
+    assert!(pairs.contains(&(
+        "filter[bundleId]".to_string(),
+        "com.example.app".to_string()
+    )));
+    assert!(pairs.contains(&("sort".to_string(), "-name".to_string())));
+    assert!(pairs.contains(&("limit".to_string(), "50".to_string())));
+    assert!(pairs.contains(&("cursor".to_string(), "abc".to_string())));
+}
+
+#[test]
+fn test_query_page_params_and_arrays() {
+    let pairs = Query::new()
+        .page_param_limit(10)
+        .page_param_cursor("cur")
+        .push_many("filter[id]", ["a", "b"])
+        .push_array("ids", ["1", "2"])
+        .build();
+
+    assert!(pairs.contains(&("page[limit]".to_string(), "10".to_string())));
+    assert!(pairs.contains(&("page[cursor]".to_string(), "cur".to_string())));
+    assert!(pairs.contains(&("filter[id]".to_string(), "a".to_string())));
+    assert!(pairs.contains(&("filter[id]".to_string(), "b".to_string())));
+    assert!(pairs.contains(&("ids[]".to_string(), "1".to_string())));
+    assert!(pairs.contains(&("ids[]".to_string(), "2".to_string())));
 }

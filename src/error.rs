@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter};
 
+use reqwest::header::HeaderMap;
 use serde_derive::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Debug)]
 pub enum Error {
@@ -8,6 +10,7 @@ pub enum Error {
     Convert(serde_json::Error),
     Reqwest(reqwest::Error),
     ServerErrors(ServerErrors),
+    Http(HttpError),
     Message(ErrorMessage),
     Other(Box<dyn std::error::Error + Sync + Send>),
 }
@@ -16,6 +19,22 @@ impl Error {
     pub(crate) fn message(content: impl Into<String>) -> Self {
         Self::Message(ErrorMessage {
             content: content.into(),
+        })
+    }
+
+    pub(crate) fn http(status: u16, body: impl Into<String>) -> Self {
+        Self::Http(HttpError {
+            status,
+            body: body.into(),
+            headers: None,
+        })
+    }
+
+    pub(crate) fn http_with_headers(status: u16, headers: HeaderMap, body: impl Into<String>) -> Self {
+        Self::Http(HttpError {
+            status,
+            body: body.into(),
+            headers: Some(headers),
         })
     }
 }
@@ -38,6 +57,10 @@ impl Display for Error {
             }
             Error::ServerErrors(err) => {
                 builder.field("kind", &"ServerErrors");
+                builder.field("source", err);
+            }
+            Error::Http(err) => {
+                builder.field("kind", &"Http");
                 builder.field("source", err);
             }
             Error::Message(err) => {
@@ -64,10 +87,20 @@ pub struct ServerErrors {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ServerError {
+    #[serde(default)]
+    pub id: Option<String>,
+    #[serde(default)]
     pub status: String,
+    #[serde(default)]
     pub code: String,
+    #[serde(default)]
     pub title: String,
+    #[serde(default)]
     pub detail: String,
+    #[serde(default)]
+    pub source: Option<Value>,
+    #[serde(default)]
+    pub meta: Option<Value>,
 }
 
 impl Display for ServerErrors {
@@ -79,6 +112,25 @@ impl Display for ServerErrors {
 }
 
 impl std::error::Error for ServerErrors {}
+
+#[derive(Debug, Clone)]
+pub struct HttpError {
+    pub status: u16,
+    pub body: String,
+    pub headers: Option<HeaderMap>,
+}
+
+impl Display for HttpError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut builder = f.debug_struct("apple_development::HttpError");
+        builder.field("status", &self.status);
+        builder.field("body", &self.body);
+        builder.field("headers", &self.headers);
+        builder.finish()
+    }
+}
+
+impl std::error::Error for HttpError {}
 
 impl From<reqwest::Error> for Error {
     fn from(value: reqwest::Error) -> Self {

@@ -23,11 +23,14 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
     ```rust
     #[tokio::main]
     async fn main() -> Result<()> {
+        let iss = std::env::var("APPSTORECONNECT_ISS")?;
+        let kid = std::env::var("APPSTORECONNECT_KID")?;
+        let ec_der_b64 = std::env::var("APPSTORECONNECT_EC_DER_BASE64")?;
         // create client
         let client = ClientBuilder::default()
-            .with_iss(env!("iss"))
-            .with_kid(env!("kid"))
-            .with_ec_der(base64::decode(env!("ec_der"))?) 
+            .with_iss(iss)
+            .with_kid(kid)
+            .with_ec_der(base64::decode(ec_der_b64)?) 
             .build()?;
         // get find devices
         let devices = client.devices(DeviceQuery {
@@ -38,8 +41,31 @@ in [here](https://developer.apple.com/documentation/appstoreconnectapi).
     }
     ```
 
-4. More example : Create or list profile, certs, bundleIds please
-   visit [test.rs](https://github.com/niuhuan/appstoreconnect-rs/blob/master/src/tests.rs)
+4. Escape-hatch (raw request) and paging
+
+   ```rust
+   use appstoreconnect::query::Query;
+
+   // any endpoint / any query params
+   let apps: appstoreconnect::entities::PageResponse<appstoreconnect::entities::App> =
+       client
+           .raw()
+           .get("/v1/apps")
+           .query(Query::new().fields("apps", ["name", "bundleId"]).page_limit(50))
+           .send_json()
+           .await?;
+
+   // auto follow `links.next`
+   let mut pager = apps.pager(&client);
+   while let Some(page) = pager.next_page().await? {
+       for app in page.data {
+           println!("{}", app.attributes.bundle_id);
+       }
+   }
+   ```
+
+5. More example : Create or list profile, certs, bundleIds please
+   visit [src/tests.rs](https://github.com/niuhuan/appstoreconnect-rs/blob/master/src/tests.rs)
 
 ## features
 
